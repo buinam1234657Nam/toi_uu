@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/n
 import { AnyElement } from "@/constants";
 import { ISingIn } from "./services";
 import { useSingIn } from "./queryHook";
+import DOMPurify from 'dompurify';
 const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyElement> }) => {
     const [form, setForm] = React.useState<ISingIn>({} as ISingIn)
     const { mutate: singIn } = useSingIn(() => {
@@ -11,7 +12,8 @@ const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyEleme
     })
     const onFinish = () => {
         if (form) {
-            singIn(form)
+            // singIn(form)
+            console.log(form.email)
         }
     }
     return <Center w="100%">
@@ -33,7 +35,8 @@ const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyEleme
                     <Input
                         type="text"
                         onChangeText={(value) => {
-                            setForm({ ...form, email: value })
+                            const sanitizedValue = DOMPurify.sanitize(value);
+                            setForm({ ...form, email: sanitizedValue })
                         }}
                     />
                 </FormControl>
@@ -41,7 +44,8 @@ const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyEleme
                     <FormControl.Label>Password</FormControl.Label>
                     <Input type="password"
                         onChangeText={(value) => {
-                            setForm({ ...form, password: value })
+                            const sanitizedValue = DOMPurify.sanitize(value);
+                            setForm({ ...form, password: sanitizedValue })
                         }}
                     />
                     <Link _text={{

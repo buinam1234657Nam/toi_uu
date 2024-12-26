@@ -1,5 +1,6 @@
-import Product, { IProduct } from "../model/product.model"
-import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../types"
+import Product, { IProduct } from "../model/product.model";
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../types";
+
 // get all product
 const getAllProduct = async () => {
     try {
