@@ -8,6 +8,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { appStore } from "@/store";
 import useUpdateAccount from "./hook/useUpdateAccount";
 import useGetUserDetail from "@/hooks/useGetUserDetail";
+import { AlertTypes, Notification } from "@/components/Notification";
 type RootStackParamList = {
     Home: undefined
 };
@@ -41,17 +42,27 @@ export const Accounts = () => {
                 name: user_info.name,
                 email: user_info.email,
                 address: user_info.address,
-                oldPassword: user_info.password,
+                phoneNumber:user_info.phone
             })
         }
     }, [user_info])
     const handleSubmit = async () => {
+        if(String(form.newPassword) === String(form.oldPassword)){
+            Notification({
+                description:"Mật khẩu cũ và mới không được trùng nhau",
+                alertType: AlertTypes.ERROR
+            })
+            return;
+        }
         updateAccount({
-            ...form,
+            _id: user_info._id,
+            name:form.name,
             password: form.oldPassword,
+            avatar:form.avatar,
+            phone:form.phoneNumber,
+            address:form.address,
             newPassWord: form.newPassword,
-            confirmPassword: form.newPassword,
-            _id: user_info._id
+            email:form.email
         })
     };
 

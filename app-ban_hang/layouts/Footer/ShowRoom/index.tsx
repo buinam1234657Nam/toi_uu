@@ -5,10 +5,10 @@ import Feather from '@expo/vector-icons/Feather';
 import Entypo from '@expo/vector-icons/Entypo';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { useState } from "react";
-import MyMapCS1 from "@/components/common/Map/MyMapCS1";
-import MyMapCS2 from "@/components/common/Map/MyMapCS2";
-import MyMapCS3 from "@/components/common/Map/MyMapCS3";
-import MyMapOrder from "@/components/common/Map/MyMapOrder";
+// import MyMapCS1 from "@/components/common/Map/MyMapCS1";
+// import MyMapCS2 from "@/components/common/Map/MyMapCS2";
+// import MyMapCS3 from "@/components/common/Map/MyMapCS3";
+// import MyMapOrder from "@/components/common/Map/MyMapOrder";
 const screenWidth = Dimensions.get('window').width;
 export const ShowRow = () => {
     const [showModalMap1, setShowModalMap1] = useState(false)
@@ -33,7 +33,7 @@ export const ShowRow = () => {
                 <Modal.Content width={screenWidth} minHeight="400px">
                     <Modal.CloseButton />
                     <Modal.Body>
-                        <MyMapCS2 />
+                        {/* <MyMapCS2 /> */}
                     </Modal.Body>
                 </Modal.Content>
             </Modal>
@@ -85,7 +85,7 @@ export const ShowRow = () => {
                         </Text>
                     </Modal.Header>
                     <Modal.Body>
-                        <MyMapOrder id="6712aa01c433cfb63fb15475" />
+                        {/* <MyMapOrder id="6712aa01c433cfb63fb15475" /> */}
                     </Modal.Body>
                 </Modal.Content>
             </Modal>
@@ -135,7 +135,7 @@ export const ShowRow = () => {
                         </Text>
                     </Modal.Header>
                     <Modal.Body>
-                        <MyMapCS3 />
+                        {/* <MyMapCS3 /> */}
                     </Modal.Body>
                 </Modal.Content>
             </Modal>
