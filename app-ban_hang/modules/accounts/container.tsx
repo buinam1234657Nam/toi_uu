@@ -9,6 +9,8 @@ import { appStore } from "@/store";
 import useUpdateAccount from "./hook/useUpdateAccount";
 import useGetUserDetail from "@/hooks/useGetUserDetail";
 import { AlertTypes, Notification } from "@/components/Notification";
+import DOMPurify from 'dompurify';
+
 type RootStackParamList = {
     Home: undefined
 };
@@ -98,7 +100,7 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Tên"
                                 value={form.name}
-                                onChangeText={(value) => handleChange('name', value)}
+                                onChangeText={(value) => handleChange('name', DOMPurify.sanitize(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
@@ -107,7 +109,7 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Email"
                                 value={form.email}
-                                onChangeText={(value) => handleChange('email', value)}
+                                onChangeText={(value) => handleChange('email', DOMPurify.sanitize(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
@@ -116,7 +118,7 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Địa chỉ"
                                 value={form.address}
-                                onChangeText={(value) => handleChange('address', value)}
+                                onChangeText={(value) => handleChange('address',  DOMPurify.sanitize(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
@@ -125,7 +127,7 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Số điện thoại"
                                 value={form.phoneNumber}
-                                onChangeText={(value) => handleChange('phoneNumber', value)}
+                                onChangeText={(value) => handleChange('phoneNumber',  DOMPurify.sanitize(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
@@ -135,7 +137,7 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Mật khẩu cũ"
                                 value={form.oldPassword}
-                                onChangeText={(value) => handleChange('oldPassword', value)}
+                                onChangeText={(value) => handleChange('oldPassword',  DOMPurify.sanitize(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
@@ -145,13 +147,13 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Mật khẩu mới"
                                 value={form.newPassword}
-                                onChangeText={(value) => handleChange('newPassword', value)}
+                                onChangeText={(value) => handleChange('newPassword',  DOMPurify.sanitize(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
                             <FormControl.Label mb={1}>Ảnh đại diện</FormControl.Label>
                             <CImagePicker onChange={(value) => {
-                                handleChange('avatar', value)
+                                handleChange('avatar', DOMPurify.sanitize(value))
                             }} />
                         </FormControl>
                         <Box style={styles.buttonContainer}>

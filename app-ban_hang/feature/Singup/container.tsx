@@ -5,6 +5,8 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Linking, Text } from "react-native";
 import { useCreateUser } from "./queryHook";
 import { AnyElement } from "@/constants";
+import DOMPurify from 'dompurify';
+
 export interface ISingUp {
     email: string;
     password: string;
@@ -86,7 +88,7 @@ const SingUp = ({ navigation }: { navigation: NativeStackNavigationProp<AnyEleme
                                 onChangeText={(value) =>
                                     setData({
                                         ...formData,
-                                        [field.key]: value,
+                                        [field.key]: DOMPurify.sanitize(value),
                                     })
                                 }
                             />
