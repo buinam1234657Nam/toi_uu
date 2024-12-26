@@ -1,8 +1,8 @@
 require("dotenv").config()
-import express from "express"
 import cors from "cors"
-import routers from "./router"
+import express from "express"
 import connectDB from "./config/connectDataBase"
+import routers from "./router"
 import routerPayment from "./service/payment.service"
 const app = express()
 app.use(cors())
