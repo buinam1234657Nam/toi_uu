@@ -1,11 +1,14 @@
 import { error } from "console";
 import User, { IUser } from "../model/user.model";
 import cartService from "./cart.service";
+import bcrypt from "bcrypt";
+import { saltLength } from "../constants";
+
 export interface IUpdateAccount {
     _id: string;
     email: string;
     name?: string;
-    password?: string;
+    password: string;
     confirmPassword?: string;
     avatar?: string | null;
     phone?: string;
@@ -42,7 +45,12 @@ const createUser = async (data: IUser) => {
             const error = new Error(errors.join(", "));
             throw error;
         }
-        const result = await User.create({ ...data });
+        const passwordBcrypt = await bcrypt.hash(data.password,saltLength);
+        const result = await User.create({ 
+            ...data,
+            password:passwordBcrypt,
+            confirmPassword:passwordBcrypt
+         });
         cartService.createCart(result._id as string)
         return result;
     } catch (error) {
@@ -54,17 +62,19 @@ const createUser = async (data: IUser) => {
 const updateUser = async ({ _id, ...data }: IUpdateAccount) => {
     const { email, ...updatedData } = data;
     try {
+        let oldPassword;
         const user = await User.findById(_id);
-        if (data.newPassWord) {
-            if (user?.password !== data.password) {
+        if (data.newPassWord && user) {
+            const newPasswordBcrypt = await bcrypt.hash(data.newPassWord,saltLength)
+            oldPassword = await bcrypt.compare(data.password,user.password)
+            if (!oldPassword) {
                 throw Error("Password is incorrect");
             }
             else {
                 await User.updateOne({ _id: _id }, {
-
                     ...data,
-                    password: data.newPassWord,
-                    confirmPassword: data.newPassWord
+                    password: newPasswordBcrypt,
+                    confirmPassword: newPasswordBcrypt
                 });
             }
         }
