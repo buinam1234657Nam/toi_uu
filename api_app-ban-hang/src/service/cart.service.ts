@@ -1,4 +1,6 @@
 import Cart from "../model/cart.model";
+import DOMPurify from 'dompurify';
+
 export interface IUpdateCartItem {
     productId: string;
     detail: {
@@ -73,14 +75,14 @@ const updateCart = async (data: IUpdateCart) => {
                 };
             } else {
                 cart.products.push({
-                    product_id: updateItem.productId,
+                    product_id:  DOMPurify.sanitize(updateItem.productId),
                     detail: {
                         preview: {
-                            image: updateItem.detail.preview.image,
-                            color: updateItem.detail.preview.color,
-                            bgColor: updateItem.detail.preview.bgColor,
+                            image:  DOMPurify.sanitize(updateItem.detail.preview.image),
+                            color: DOMPurify.sanitize(updateItem.detail.preview.color),
+                            bgColor: DOMPurify.sanitize(updateItem.detail.preview.bgColor),
                         },
-                        name: updateItem.detail.name,
+                        name: DOMPurify.sanitize(updateItem.detail.name),
                         size: updateItem.detail.size,
                         real_price: updateItem.detail.real_price,
                         sale_price: updateItem.detail.sale_price,
