@@ -14,6 +14,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { appStore } from "@/store";
 import { AnyElement, formatCurrency } from "@/constants";
 import useCreatePayment from "./hook/useCreatePayment";
+import DOMPurify from 'dompurify';
 type RootStackParamList = {
     Home: undefined;
 };
@@ -239,7 +240,10 @@ export const Payment = () => {
                                     <Input
                                         placeholder="Tên"
                                         onBlur={onBlur}
-                                        onChangeText={onChange}
+                                        onChangeText={(text) => {
+                                            const sanitizedValue = DOMPurify.sanitize(text);
+                                            onChange(sanitizedValue);
+                                        }}
                                         value={value}
                                         variant="underlined"
                                     />
@@ -256,7 +260,10 @@ export const Payment = () => {
                                     <Input
                                         placeholder="Số điện thoại"
                                         onBlur={onBlur}
-                                        onChangeText={onChange}
+                                        onChangeText={(text) => {
+                                            const sanitizedValue = DOMPurify.sanitize(text);
+                                            onChange(sanitizedValue);
+                                        }}
                                         value={value}
                                         variant="underlined"
                                     />
@@ -282,7 +289,8 @@ export const Payment = () => {
                                     <Select
                                         selectedValue={value}
                                         onValueChange={(itemValue) => {
-                                            onChange(itemValue);
+                                            const sanitizedValue = DOMPurify.sanitize(itemValue);
+                                            onChange(sanitizedValue);
                                             handleCityChange(itemValue);
                                         }}
                                         placeholder="Thành phố"
@@ -331,7 +339,10 @@ export const Payment = () => {
                                     <Input
                                         placeholder="Tên đường, Tòa nhà, Số nhà"
                                         onBlur={onBlur}
-                                        onChangeText={onChange}
+                                        onChangeText={(text) => {
+                                            const sanitizedValue = DOMPurify.sanitize(text);
+                                            onChange(sanitizedValue);
+                                        }}
                                         value={value}
                                         variant="underlined"
                                     />
@@ -361,3 +372,5 @@ const styles = StyleSheet.create({
         width: "100%"
     }
 })
+
+
