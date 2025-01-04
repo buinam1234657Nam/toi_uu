@@ -16,59 +16,135 @@ import { View } from '@/modules/view/body';
 import { Payment } from '@/modules/payment';
 import { ViewDetailProduct } from '@/components/common/Product/ViewDetailProduct';
 import { ViewCategory } from '@/modules/view/category';
+import HttpRequest from '@/utils/HttpRequest';
+import { SingInService } from '@/feature/Singin/services';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
 
 const App = () => {
+    const [initialRoute, setInitialRoute] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    //const token = AsyncStorage.getItem("access_token");
+    if (!token) {
+        setInitialRoute("SingIn");
+    } else {
+      setInitialRoute("Home");
+    }
+  }, []);
+
+  if (!initialRoute) {
+    return null;
+  }
+
+  HttpRequest.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem("access_token");
+      //const token = AsyncStorage.getItem("access_token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }else{
+        setInitialRoute("SingIn");
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+
+  HttpRequest.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      console.log("Error response:", error.response?.status);
+      if (error.response?.status === 401) {
+        try {
+          const newAccessToken = await SingInService.refreshToken();
+          console.log("newAccessToken", newAccessToken);
+          error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+          return HttpRequest.request(error.config);
+        } catch (refreshError) {
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          AsyncStorage.removeItem("access_token");
+          AsyncStorage.removeItem("refresh_token");
+          setInitialRoute("SingIn");
+          return Promise.reject(refreshError);
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
+
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-            <NativeBaseProvider>
-                <SafeAreaView style={{ flex: 1 }}>
-                    <QueryClientProvider client={queryClient}>
-                        <NotifierWrapper>
-                            <Stack.Navigator initialRouteName="SingIn">
-                                <Stack.Screen
-                                    name="Home"
-                                    component={Home}
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="ViewDetailProduct"
-                                    component={ViewDetailProduct}
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="SingIn"
-                                    component={SingIn}
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="SingUp"
-                                    component={SingUp}
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="ForgetPassword"
-                                    component={ForgetPassword}
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="Accounts"
-                                    component={Accounts}
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen name='ViewCategory' component={ViewCategory} options={{ headerShown: false }} />
-                                <Stack.Screen name='Order' component={Order} options={{ headerShown: false }} />
-                                <Stack.Screen name='View' component={View} options={{ headerShown: false }} />
-                                <Stack.Screen name='Cart' component={Cart} options={{ headerShown: false }} />
-                                <Stack.Screen name='Payment' component={Payment} options={{ headerShown: false }} />
-                            </Stack.Navigator>
-                        </NotifierWrapper>
-                    </QueryClientProvider>
-                </SafeAreaView>
-            </NativeBaseProvider>
-        </GestureHandlerRootView >
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NativeBaseProvider>
+          <SafeAreaView style={{ flex: 1 }}>
+            <QueryClientProvider client={queryClient}>
+              <NotifierWrapper>
+                <Stack.Navigator initialRouteName={initialRoute}>
+                  <Stack.Screen
+                    name="Home"
+                    component={Home}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="ViewDetailProduct"
+                    component={ViewDetailProduct}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="SingIn"
+                    component={SingIn}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="SingUp"
+                    component={SingUp}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="ForgetPassword"
+                    component={ForgetPassword}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="Accounts"
+                    component={Accounts}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="ViewCategory"
+                    component={ViewCategory}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="Order"
+                    component={Order}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="View"
+                    component={View}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="Cart"
+                    component={Cart}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="Payment"
+                    component={Payment}
+                    options={{ headerShown: false }}
+                  />
+                </Stack.Navigator>
+              </NotifierWrapper>
+            </QueryClientProvider>
+          </SafeAreaView>
+        </NativeBaseProvider>
+      </GestureHandlerRootView>
     );
 };
 

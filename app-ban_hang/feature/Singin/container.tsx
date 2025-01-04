@@ -12,7 +12,7 @@ const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyEleme
     })
     const onFinish = () => {
         if (form) {
-            // singIn(form)
+            singIn(form)
             console.log(form.email)
         }
     }

@@ -12,3 +12,11 @@ const Http = (): AxiosInstance => {
 
 const HttpRequest = Http();
 export default HttpRequest
+export const isJsonString = (data: any) => {
+    try {
+        JSON.parse(data)
+    } catch (error) {
+        return false
+    }
+    return true
+}

@@ -8,7 +8,7 @@ import useGetOrder from "./hook/getOrder";
 import { appStore } from "@/store";
 import { useMemo, useState } from "react";
 import { formatCurrency } from "@/constants";
-import MyMapOrder from "@/components/common/Map/MyMapOrder";
+//import MyMapOrder from "@/components/common/Map/MyMapOrder";
 
 type RootStackParamList = {
     Home: undefined;
