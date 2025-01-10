@@ -1,38 +1,40 @@
-import * as React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NativeBaseProvider } from 'native-base';
-import Home from '@/layouts/Home';
-import { NotifierWrapper } from 'react-native-notifier';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ForgetPassword } from '@/feature/ForgetPassword/container';
-import { Accounts } from '@/modules/accounts/container';
-import { SafeAreaView } from 'react-native';
-import SingIn from '@/feature/Singin/container';
-import SingUp from '@/feature/Singup/container';
-import { Cart } from '@/modules/cart/body';
-import { Order } from '@/modules/order/body';
-import { View } from '@/modules/view/body';
-import { Payment } from '@/modules/payment';
-import { ViewDetailProduct } from '@/components/common/Product/ViewDetailProduct';
-import { ViewCategory } from '@/modules/view/category';
-import HttpRequest from '@/utils/HttpRequest';
-import { SingInService } from '@/feature/Singin/services';
+import * as React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NativeBaseProvider } from "native-base";
+import Home from "@/layouts/Home";
+import { NotifierWrapper } from "react-native-notifier";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ForgetPassword } from "@/feature/ForgetPassword/container";
+import { Accounts } from "@/modules/accounts/container";
+import { SafeAreaView } from "react-native";
+import SingIn from "@/feature/Singin/container";
+import SingUp from "@/feature/Singup/container";
+import { Cart } from "@/modules/cart/body";
+import { Order } from "@/modules/order/body";
+import { View } from "@/modules/view/body";
+import { Payment } from "@/modules/payment";
+import { ViewDetailProduct } from "@/components/common/Product/ViewDetailProduct";
+import { ViewCategory } from "@/modules/view/category";
+import HttpRequest from "@/utils/HttpRequest";
+import { SingInService } from "@/feature/Singin/services";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
 
 const App = () => {
-    const [initialRoute, setInitialRoute] = React.useState<string | null>(null);
+  const [initialRoute, setInitialRoute] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const token = localStorage.getItem("access_token");
     //const token = AsyncStorage.getItem("access_token");
+    console.log(token);
     if (!token) {
-        setInitialRoute("SingIn");
+      setInitialRoute("SingIn");
     } else {
-      setInitialRoute("Home");
+      // setInitialRoute("Home");
+      setInitialRoute("SingIn");
     }
   }, []);
 

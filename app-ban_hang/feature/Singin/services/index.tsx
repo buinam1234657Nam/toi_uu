@@ -12,7 +12,7 @@ export const SingInService = {
   },
    refreshToken: async () => {
     const refresh_token = localStorage.getItem("refresh_token");
-     //const refresh_token = AsyncStorage.getItem("refresh_token");
+    // const refresh_token = AsyncStorage.getItem("refresh_token");
     if (!refresh_token) {
       throw new Error("No refresh token found");
     }

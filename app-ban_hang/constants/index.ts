@@ -1,5 +1,5 @@
 // export const apiOrigin = "http://192.168.92.53:3000/api";
-export const apiOrigin = "http://192.168.0.104:3000/api";
+export const apiOrigin = "https://192.168.0.104:3000/api";
 
 
 export interface AnyElement {
