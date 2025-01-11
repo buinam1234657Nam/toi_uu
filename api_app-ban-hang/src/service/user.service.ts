@@ -3,7 +3,7 @@ import User, { IUser } from "../model/user.model";
 import cartService from "./cart.service";
 import bcrypt from "bcrypt";
 import { saltLength } from "../constants";
-import DOMPurify from 'dompurify';
+import basicXSSSanitizer from "../utils/basicXSSSanitizer";
 
 export interface IUpdateAccount {
     _id: string;
@@ -49,8 +49,8 @@ const createUser = async (data: IUser) => {
         const passwordBcrypt = await bcrypt.hash(data.password,saltLength);
         const result = await User.create({ 
             ...data,
-            password:DOMPurify.sanitize(passwordBcrypt),
-            confirmPassword:DOMPurify.sanitize(passwordBcrypt)
+            password:basicXSSSanitizer(passwordBcrypt),
+            confirmPassword:basicXSSSanitizer(passwordBcrypt)
          });
         cartService.createCart(result._id as string)
         return result;
@@ -74,18 +74,18 @@ const updateUser = async ({ _id, ...data }: IUpdateAccount) => {
             else {
                 await User.updateOne({ _id: _id }, {
                     ...data,
-                    password: DOMPurify.sanitize(newPasswordBcrypt),
-                    confirmPassword:  DOMPurify.sanitize(newPasswordBcrypt)
+                    password: basicXSSSanitizer(newPasswordBcrypt),
+                    confirmPassword:  basicXSSSanitizer(newPasswordBcrypt)
                 });
             }
         }
         else {
             await User.updateOne({ _id: _id }, {
-                name: data.name && DOMPurify.sanitize(data.name),
-                email: data.email && DOMPurify.sanitize(data.email),
-                phone: data.phone && DOMPurify.sanitize(data.phone),
-                address: data.address && DOMPurify.sanitize(data.address),
-                avatar: data.avatar && DOMPurify.sanitize(data.avatar)
+                name: data.name && basicXSSSanitizer(data.name),
+                email: data.email && basicXSSSanitizer(data.email),
+                phone: data.phone && basicXSSSanitizer(data.phone),
+                address: data.address && basicXSSSanitizer(data.address),
+                avatar: data.avatar && basicXSSSanitizer(data.avatar)
             });
         }
         return user;
