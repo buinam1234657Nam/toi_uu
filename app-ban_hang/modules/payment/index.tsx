@@ -14,7 +14,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { appStore } from "@/store";
 import { AnyElement, formatCurrency } from "@/constants";
 import useCreatePayment from "./hook/useCreatePayment";
-import DOMPurify from 'dompurify';
 type RootStackParamList = {
     Home: undefined;
 };

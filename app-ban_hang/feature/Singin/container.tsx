@@ -4,7 +4,8 @@ import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/n
 import { AnyElement } from "@/constants";
 import { ISingIn } from "./services";
 import { useSingIn } from "./queryHook";
-import DOMPurify from 'dompurify';
+import basicXSSSanitizer from "@/utils/basicXSSSanitizer";
+
 const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyElement> }) => {
     const [form, setForm] = React.useState<ISingIn>({} as ISingIn)
     const { mutate: singIn } = useSingIn(() => {
@@ -12,7 +13,7 @@ const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyEleme
     })
     const onFinish = () => {
         if (form) {
-            // singIn(form)
+            singIn(form)
             console.log(form.email)
         }
     }
@@ -35,8 +36,7 @@ const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyEleme
                     <Input
                         type="text"
                         onChangeText={(value) => {
-                            const sanitizedValue = DOMPurify.sanitize(value);
-                            setForm({ ...form, email: sanitizedValue })
+                            setForm({ ...form, email: basicXSSSanitizer(value) })
                         }}
                     />
                 </FormControl>
@@ -44,8 +44,7 @@ const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyEleme
                     <FormControl.Label>Password</FormControl.Label>
                     <Input type="password"
                         onChangeText={(value) => {
-                            const sanitizedValue = DOMPurify.sanitize(value);
-                            setForm({ ...form, password: sanitizedValue })
+                            setForm({ ...form, password: basicXSSSanitizer(value) })
                         }}
                     />
                     <Link _text={{
@@ -77,4 +76,4 @@ const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyEleme
         </Box>
     </Center>;
 };
-export default SingIn
+export default SingIn;

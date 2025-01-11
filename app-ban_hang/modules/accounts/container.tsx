@@ -9,7 +9,7 @@ import { appStore } from "@/store";
 import useUpdateAccount from "./hook/useUpdateAccount";
 import useGetUserDetail from "@/hooks/useGetUserDetail";
 import { AlertTypes, Notification } from "@/components/Notification";
-import DOMPurify from 'dompurify';
+import basicXSSSanitizer from "@/utils/basicXSSSanitizer";
 
 type RootStackParamList = {
     Home: undefined
@@ -100,7 +100,7 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Tên"
                                 value={form.name}
-                                onChangeText={(value) => handleChange('name', DOMPurify.sanitize(value))}
+                                onChangeText={(value) => handleChange('name', basicXSSSanitizer(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
@@ -109,7 +109,7 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Email"
                                 value={form.email}
-                                onChangeText={(value) => handleChange('email', DOMPurify.sanitize(value))}
+                                onChangeText={(value) => handleChange('email', basicXSSSanitizer(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
@@ -118,7 +118,7 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Địa chỉ"
                                 value={form.address}
-                                onChangeText={(value) => handleChange('address',  DOMPurify.sanitize(value))}
+                                onChangeText={(value) => handleChange('address',  basicXSSSanitizer(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
@@ -127,7 +127,7 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Số điện thoại"
                                 value={form.phoneNumber}
-                                onChangeText={(value) => handleChange('phoneNumber',  DOMPurify.sanitize(value))}
+                                onChangeText={(value) => handleChange('phoneNumber',  basicXSSSanitizer(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
@@ -137,7 +137,7 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Mật khẩu cũ"
                                 value={form.oldPassword}
-                                onChangeText={(value) => handleChange('oldPassword',  DOMPurify.sanitize(value))}
+                                onChangeText={(value) => handleChange('oldPassword',  basicXSSSanitizer(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
@@ -147,13 +147,13 @@ export const Accounts = () => {
                                 variant="underlined"
                                 placeholder="Mật khẩu mới"
                                 value={form.newPassword}
-                                onChangeText={(value) => handleChange('newPassword',  DOMPurify.sanitize(value))}
+                                onChangeText={(value) => handleChange('newPassword',  basicXSSSanitizer(value))}
                             />
                         </FormControl>
                         <FormControl mb="5">
                             <FormControl.Label mb={1}>Ảnh đại diện</FormControl.Label>
                             <CImagePicker onChange={(value) => {
-                                handleChange('avatar', DOMPurify.sanitize(value))
+                                handleChange('avatar', basicXSSSanitizer(value))
                             }} />
                         </FormControl>
                         <Box style={styles.buttonContainer}>

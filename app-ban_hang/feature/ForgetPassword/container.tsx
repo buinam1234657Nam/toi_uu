@@ -5,7 +5,7 @@ import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/n
 import { AnyElement } from '@/constants';
 import { TextInput } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
-import DOMPurify from 'dompurify';
+import basicXSSSanitizer from '@/utils/basicXSSSanitizer';
 
 interface IForgetPassword {
     email: string
@@ -34,7 +34,7 @@ export const ForgetPassword = ({ navigation }: { navigation: NativeStackNavigati
                         }}>Email</FormControl.Label>
                         <TextInput style={styles.input} placeholder="Email@gmail.com" onChangeText={value => setData({
                             ...formData,
-                            email: DOMPurify.sanitize(value)
+                            email: basicXSSSanitizer(value)
                         })} />
                     </FormControl>
                     {error && <Text style={styles.error}>Email is required</Text>}
