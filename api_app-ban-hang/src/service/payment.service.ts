@@ -5,7 +5,7 @@ import moment from 'moment';
 import Order, { IOrder } from '../model/order.model';
 import cartService from './cart.service';
 import Product from '../model/product.model';
-import DOMPurify from 'dompurify';
+import basicXSSSanitizer from '../utils/basicXSSSanitizer';
 const routerPayment = express.Router();
 const config = {
     app_id: '2553',
@@ -99,11 +99,11 @@ routerPayment.post('/callback', async (req: Request, res: Response) => {
             const lat = (await getCoordinatesFromAddress(address)).latitude;
             const long = (await getCoordinatesFromAddress(address)).longitude;
             const order: IOrder = {
-                orderNo: DOMPurify.sanitize(dataJson.app_trans_id),
-                customerId: DOMPurify.sanitize(customer[0].trim()),
-                customerName: DOMPurify.sanitize(customer[1]),
-                customerPhone: DOMPurify.sanitize(phone),
-                shippingAddress: DOMPurify.sanitize(address),
+                orderNo:basicXSSSanitizer(dataJson.app_trans_id),
+                customerId:basicXSSSanitizer(customer[0].trim()),
+                customerName:basicXSSSanitizer(customer[1]),
+                customerPhone:basicXSSSanitizer(phone),
+                shippingAddress:basicXSSSanitizer(address),
                 endShipperLocation: {
                     latitude: lat,
                     longitude: long

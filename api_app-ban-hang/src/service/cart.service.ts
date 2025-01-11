@@ -1,5 +1,5 @@
 import Cart from "../model/cart.model";
-import DOMPurify from 'dompurify';
+import basicXSSSanitizer from "../utils/basicXSSSanitizer";
 
 export interface IUpdateCartItem {
     productId: string;
@@ -75,14 +75,14 @@ const updateCart = async (data: IUpdateCart) => {
                 };
             } else {
                 cart.products.push({
-                    product_id:  DOMPurify.sanitize(updateItem.productId),
+                    product_id: basicXSSSanitizer(updateItem.productId),
                     detail: {
                         preview: {
-                            image:  DOMPurify.sanitize(updateItem.detail.preview.image),
-                            color: DOMPurify.sanitize(updateItem.detail.preview.color),
-                            bgColor: DOMPurify.sanitize(updateItem.detail.preview.bgColor),
+                            image: basicXSSSanitizer(updateItem.detail.preview.image),
+                            color:basicXSSSanitizer(updateItem.detail.preview.color),
+                            bgColor:basicXSSSanitizer(updateItem.detail.preview.bgColor),
                         },
-                        name: DOMPurify.sanitize(updateItem.detail.name),
+                        name:basicXSSSanitizer(updateItem.detail.name),
                         size: updateItem.detail.size,
                         real_price: updateItem.detail.real_price,
                         sale_price: updateItem.detail.sale_price,
