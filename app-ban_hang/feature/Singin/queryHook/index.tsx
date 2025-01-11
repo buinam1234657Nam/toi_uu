@@ -14,8 +14,8 @@ export const useSingIn = (onSuccess: () => void) => {
     ) => {
       onSuccess && onSuccess();
       setUserInfo(data);
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("refresh_token", data.refresh_token);
+      //localStorage.setItem("access_token", data.access_token);
+     // localStorage.setItem("refresh_token", data.refresh_token);
       AsyncStorage.setItem("access_token", data.access_token);
       AsyncStorage.setItem("refresh_token", data.refresh_token);
     },

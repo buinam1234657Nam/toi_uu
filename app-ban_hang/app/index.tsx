@@ -25,17 +25,20 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [initialRoute, setInitialRoute] = React.useState<string | null>(null);
+  const [token, setToken] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    //const token = AsyncStorage.getItem("access_token");
-    console.log(token);
-    if (!token) {
-      setInitialRoute("SingIn");
-    } else {
-      // setInitialRoute("Home");
-      setInitialRoute("SingIn");
-    }
+    const fetchToken = async () => {
+      const storedToken = await AsyncStorage.getItem("access_token");
+      setToken(storedToken);
+      if (!storedToken) {
+        setInitialRoute("SingIn");
+      } else {
+        //setInitialRoute("SingIn");
+        setInitialRoute("Home");
+      }
+    };
+    fetchToken();
   }, []);
 
   if (!initialRoute) {
@@ -44,11 +47,9 @@ const App = () => {
 
   HttpRequest.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem("access_token");
-      //const token = AsyncStorage.getItem("access_token");
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }else{
+        config.headers.authorization = `Bearer ${token}`;
+      } else {
         setInitialRoute("SingIn");
       }
       return config;
@@ -59,18 +60,14 @@ const App = () => {
   HttpRequest.interceptors.response.use(
     (response) => response,
     async (error) => {
-      console.log("Error response:", error.response?.status);
       if (error.response?.status === 401) {
         try {
+          AsyncStorage.removeItem("access_token");
           const newAccessToken = await SingInService.refreshToken();
-          console.log("newAccessToken", newAccessToken);
-          error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+          AsyncStorage.setItem("access_token", newAccessToken);
+          error.config.headers.authorization = `Bearer ${newAccessToken}`;
           return HttpRequest.request(error.config);
         } catch (refreshError) {
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("refresh_token");
-          AsyncStorage.removeItem("access_token");
-          AsyncStorage.removeItem("refresh_token");
           setInitialRoute("SingIn");
           return Promise.reject(refreshError);
         }
@@ -79,75 +76,75 @@ const App = () => {
     }
   );
 
-    return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <NativeBaseProvider>
-          <SafeAreaView style={{ flex: 1 }}>
-            <QueryClientProvider client={queryClient}>
-              <NotifierWrapper>
-                <Stack.Navigator initialRouteName={initialRoute}>
-                  <Stack.Screen
-                    name="Home"
-                    component={Home}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="ViewDetailProduct"
-                    component={ViewDetailProduct}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="SingIn"
-                    component={SingIn}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="SingUp"
-                    component={SingUp}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="ForgetPassword"
-                    component={ForgetPassword}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="Accounts"
-                    component={Accounts}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="ViewCategory"
-                    component={ViewCategory}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="Order"
-                    component={Order}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="View"
-                    component={View}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="Cart"
-                    component={Cart}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="Payment"
-                    component={Payment}
-                    options={{ headerShown: false }}
-                  />
-                </Stack.Navigator>
-              </NotifierWrapper>
-            </QueryClientProvider>
-          </SafeAreaView>
-        </NativeBaseProvider>
-      </GestureHandlerRootView>
-    );
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NativeBaseProvider>
+        <SafeAreaView style={{ flex: 1 }}>
+          <QueryClientProvider client={queryClient}>
+            <NotifierWrapper>
+              <Stack.Navigator initialRouteName={initialRoute}>
+                <Stack.Screen
+                  name="Home"
+                  component={Home}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="ViewDetailProduct"
+                  component={ViewDetailProduct}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="SingIn"
+                  component={SingIn}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="SingUp"
+                  component={SingUp}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="ForgetPassword"
+                  component={ForgetPassword}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Accounts"
+                  component={Accounts}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="ViewCategory"
+                  component={ViewCategory}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Order"
+                  component={Order}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="View"
+                  component={View}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Cart"
+                  component={Cart}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Payment"
+                  component={Payment}
+                  options={{ headerShown: false }}
+                />
+              </Stack.Navigator>
+            </NotifierWrapper>
+          </QueryClientProvider>
+        </SafeAreaView>
+      </NativeBaseProvider>
+    </GestureHandlerRootView>
+  );
 };
 
 export default App;

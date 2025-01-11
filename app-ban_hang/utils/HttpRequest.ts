@@ -3,7 +3,7 @@ import { apiOrigin } from "@/constants/index";
 const Http = (): AxiosInstance => {
     return axios.create({
         baseURL: `${apiOrigin}/`,
-        timeout: 1000,
+        timeout: 5000,
         headers: {
             "Content-Type": "application/json",
         }
