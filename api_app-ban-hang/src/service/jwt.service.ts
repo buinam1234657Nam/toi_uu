@@ -14,7 +14,7 @@ export const genneralAccessToken = async (payload: any) => {
         privateKey,
         {
             algorithm: "RS256",
-            expiresIn: "30s",
+            expiresIn: "30d",
         }
     );
 
@@ -53,7 +53,6 @@ export const refreshTokenJwtService = (token: string) => {
                     });
                 }
 
-                // Tạo access token mới
                 const access_token = await genneralAccessToken({
                     id: user?.id,
                 });

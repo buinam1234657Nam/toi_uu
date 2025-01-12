@@ -9,7 +9,6 @@ import { useQuery } from "@tanstack/react-query"
 const fetcher = async (params: { page: number, limit: number }) => {
 
     let token = await AsyncStorage.getItem("access_token");
-    console.log("new" , token);
     if (!token) {
         throw new Error("Không tìm thấy access token");
     }

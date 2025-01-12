@@ -25,12 +25,10 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [initialRoute, setInitialRoute] = React.useState<string | null>(null);
-  const [token, setToken] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const fetchToken = async () => {
       const storedToken = await AsyncStorage.getItem("access_token");
-      setToken(storedToken);
       if (!storedToken) {
         setInitialRoute("SingIn");
       } else {
@@ -38,43 +36,36 @@ const App = () => {
         setInitialRoute("Home");
       }
     };
-    fetchToken();
+
+    const scheduleTokenRefresh = () => {
+      const refreshInterval = setInterval(async () => {
+        try {
+          const newAccessToken = await SingInService.refreshToken();
+          await AsyncStorage.setItem("access_token", newAccessToken);
+          HttpRequest.interceptors.request.use((config) => {
+            config.headers.authorization = `Bearer ${newAccessToken}`;
+            return config;
+          });
+        } catch (error) {
+          console.error("Error refreshing token:", error);
+          clearInterval(refreshInterval);
+          AsyncStorage.removeItem("access_token");
+          setInitialRoute("SingIn");
+        }
+      }, 60 * 1000);
+
+      return refreshInterval;
+    };
+
+    fetchToken().then(() => {
+      const refreshInterval = scheduleTokenRefresh();
+      return () => clearInterval(refreshInterval);
+    });
   }, []);
 
   if (!initialRoute) {
     return null;
   }
-
-  HttpRequest.interceptors.request.use(
-    (config) => {
-      if (token) {
-        config.headers.authorization = `Bearer ${token}`;
-      } else {
-        setInitialRoute("SingIn");
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
-
-  HttpRequest.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      if (error.response?.status === 401) {
-        try {
-          AsyncStorage.removeItem("access_token");
-          const newAccessToken = await SingInService.refreshToken();
-          AsyncStorage.setItem("access_token", newAccessToken);
-          error.config.headers.authorization = `Bearer ${newAccessToken}`;
-          return HttpRequest.request(error.config);
-        } catch (refreshError) {
-          setInitialRoute("SingIn");
-          return Promise.reject(refreshError);
-        }
-      }
-      return Promise.reject(error);
-    }
-  );
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

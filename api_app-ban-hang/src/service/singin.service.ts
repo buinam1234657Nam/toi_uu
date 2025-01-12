@@ -28,7 +28,7 @@ const signin = async (data: ISignIn) => {
         });
         return;
       }
-      // Tạo access_token và refresh_token
+      
       const access_token = await genneralAccessToken({
         id: user.id,
       });
