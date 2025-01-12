@@ -16,14 +16,18 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.buinam7122002.appban_hang"
     },
     "web": {
       "bundler": "metro",
       "output": "static"
     },
     "plugins": [
-       "expo-router",
+      "expo-router",
       [
         "expo-image-picker",
         {
@@ -33,6 +37,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "b64d53a4-f483-42f3-be44-37b30a2cb3d2"
+      }
+    },
+    "owner": "buinam7122002"
   }
 }

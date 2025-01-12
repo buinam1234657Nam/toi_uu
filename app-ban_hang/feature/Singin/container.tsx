@@ -14,7 +14,6 @@ const SingIn = ({ navigation }: { navigation: NativeStackNavigationProp<AnyEleme
     const onFinish = () => {
         if (form) {
             singIn(form)
-            console.log(form.email)
         }
     }
     return <Center w="100%">

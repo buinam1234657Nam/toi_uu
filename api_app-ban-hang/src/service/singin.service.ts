@@ -8,6 +8,7 @@ interface ISignIn {
 
 const singin = async (data: ISignIn) => {
   const { email, password } = data;
+  console.log(email, password);
   try {
     const user = await User.findOne({ email });
     if (!user) {
