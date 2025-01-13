@@ -4,13 +4,16 @@ import React from 'react';
 import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
 import { useNavigation } from 'expo-router';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RootStackParamList = {
     Home: undefined;
     Cart: undefined;
     Accounts: undefined;
     View: undefined;
-    Order: undefined
+    Order: undefined;
+    SingIn: undefined;
 };
 
 type FooterAppBarNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -38,22 +41,6 @@ export const FooterAppBar = () => {
                         </Text>
                     </Center>
                 </Pressable>
-                {/* <Pressable
-                    opacity={selected === 0 ? 1 : 0.5}
-                    py="3"
-                    flex={1}
-                    onPress={() => {
-                        navigation.navigate('View');
-                        setSelected(0);
-                    }}
-                >
-                    <Center>
-                        <Icon as={<MaterialCommunityIcons name={selected === 0 ? 'home' : 'home-outline'} />} color="white" size="lg" />
-                        <Text color="white" fontSize="12">
-                            View
-                        </Text>
-                    </Center>
-                </Pressable> */}
                 <Pressable
                     opacity={selected === 2 ? 1 : 0.6}
                     py="2"
@@ -92,13 +79,30 @@ export const FooterAppBar = () => {
                     flex={1}
                     onPress={() => {
                         navigation.navigate('Order');
-                        setSelected(2);
+                        setSelected(4);
                     }}
                 >
                     <Center>
                         <Icon as={<FontAwesome6 name={'cart-flatbed'} />} color="white" size="lg" />
                         <Text color="white" fontSize="12">
                             Đơn hàng
+                        </Text>
+                    </Center>
+                </Pressable>
+                <Pressable
+                    opacity={selected === 2 ? 1 : 0.6}
+                    py="2"
+                    flex={1}
+                    onPress={() => {
+                        AsyncStorage.removeItem("access_token");
+                        navigation.navigate('SingIn');
+                        setSelected(5);
+                    }}
+                >
+                    <Center>
+                        <Icon as={<MaterialIcons name={'logout'} />} color="white" size="lg" />
+                        <Text color="white" fontSize="12">
+                            Đăng xuất
                         </Text>
                     </Center>
                 </Pressable>

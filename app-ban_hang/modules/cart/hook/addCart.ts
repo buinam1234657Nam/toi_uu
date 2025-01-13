@@ -1,4 +1,4 @@
-import { Notification } from "@/components/Notification"
+import { AlertTypes, Notification } from "@/components/Notification"
 import HttpRequest from "@/utils/HttpRequest"
 import { useMutation } from "@tanstack/react-query"
 

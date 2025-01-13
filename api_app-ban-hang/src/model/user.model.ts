@@ -10,6 +10,7 @@ export interface IUser extends Document {
     status: number;
     phone: string;
     address: string;
+    infoDevice: string;
 }
 const userSchema: Schema = new Schema({
     email: { type: String, required: true, unique: true },
@@ -19,7 +20,8 @@ const userSchema: Schema = new Schema({
     avatar: { type: String },
     status: { type: Number },
     phone: { type: String },
-    address: { type: String }
+    address: { type: String },
+    infoDevice: { type: String }
 }, {
     timestamps: true
 });

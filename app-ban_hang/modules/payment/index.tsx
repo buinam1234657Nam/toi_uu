@@ -1,5 +1,18 @@
-import { StyleSheet } from "react-native"
-import { Text, HStack, Pressable, Box, Image, Heading, ScrollView, Popover, FormControl, Input, Select, VStack } from 'native-base';
+import { StyleSheet } from "react-native";
+import {
+    Text,
+    HStack,
+    Pressable,
+    Box,
+    Image,
+    Heading,
+    ScrollView,
+    Popover,
+    FormControl,
+    Input,
+    Select,
+    VStack,
+} from 'native-base';
 import React, { useEffect, useMemo, useState } from 'react';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack/types";
@@ -14,11 +27,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { appStore } from "@/store";
 import { AnyElement, formatCurrency } from "@/constants";
 import useCreatePayment from "./hook/useCreatePayment";
+import validator from 'validator';
+import { Encrypt } from "@/utils/aesencryption ";
+import basicXSSSanitizer from "@/utils/basicXSSSanitizer";
+
 type RootStackParamList = {
     Home: undefined;
 };
 type FooterAppBarNavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 
 interface District {
     name: string;
@@ -29,9 +45,16 @@ export const Payment = () => {
     const navigation = useNavigation<FooterAppBarNavigationProp>();
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCity, setSelectedCity] = useState<AnyElement | null>(null);
-    const { listPayment, user_info } = appStore()
+    const { listPayment, user_info } = appStore();
     const router = useRouter();
-    const { control, handleSubmit } = useForm();
+    const { control, handleSubmit, formState: { errors } } = useForm<{
+      name: string;
+      phone: string;
+      city: string;
+      district: string;
+      address: string;
+      paymentMethod: string;
+    }>();
 
     useEffect(() => {
         const handleDeepLink = (event: any) => {
@@ -44,10 +67,9 @@ export const Payment = () => {
         return res.data.data;
     };
 
-
     const { data: cities, isLoading: loadingCities } = useQuery({
         queryKey: ["cities"],
-        queryFn: getCities
+        queryFn: getCities,
     });
 
     const queryClient = useQueryClient();
@@ -67,36 +89,53 @@ export const Payment = () => {
         if (data.data.order_url) {
             router.push(data.data.order_url);
         }
-    })
+    });
     const amount = useMemo(() => {
         if (listPayment.length === 0) return 0;
         return listPayment.reduce((total, item) => {
             const price = item.detail.sale_price ?? item.detail.real_price;
             return total + price * item.quantity;
-        }, 0)
-    }, [listPayment])
+        }, 0);
+    }, [listPayment]);
+
     const handleCityChange = (cityName: string) => {
-        const city = cities.find((c: any) => c.name === cityName);
+      const city = cities?.find((c: any) => c.name === cityName);
         if (city) {
             setSelectedCity(city);
             fetchDistricts(city.id);
         }
     };
+    const validatePhone = (value: string): string | undefined => {
+      if (!value) {
+        return 'Số điện thoại là bắt buộc';
+      }
+      if(!validator.isMobilePhone(value)) {
+         return 'Số điện thoại không hợp lệ'
+      }
+      return undefined;
+    }
+
     const onSubmit = (data: any) => {
-        const dataAdress = `${data.city},${data.district},${data.address}`
+        const dataAdress = `${data.city},${data.district},${data.address}`;
         createPayment({
-            user_id: `${user_info._id} - ${data.name}`,
-            amount: amount,
             items: listPayment,
-            address: dataAdress,
-            phone: data.phone
-        })
+            user_id: `${user_info._id} - ${data.name}`,
+            amount: Encrypt(amount.toString()),
+            address: Encrypt(dataAdress),
+            phone: Encrypt(data.phone),
+        });
     };
     return (
         <Box flex={1}>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <Box bg="white" safeAreaTop width="100%" alignSelf="center">
-                    <HStack height={60} style={{ backgroundColor: "white" }} alignItems="center" safeAreaBottom shadow={6}>
+                    <HStack
+                        height={60}
+                        style={{ backgroundColor: "white" }}
+                        alignItems="center"
+                        safeAreaBottom
+                        shadow={6}
+                    >
                         <Pressable
                             py="3"
                             flex={1}
@@ -152,7 +191,7 @@ export const Payment = () => {
                                     </HStack>
                                 </Box>
                             </Box>
-                        )
+                        );
                     })}
                 </Box>
                 {/* Phuong thuc thanh toan va van chuyen */}
@@ -230,43 +269,42 @@ export const Payment = () => {
                         <Text fontWeight="bold">Liên hệ</Text>
                     </Box>
                     <VStack space={2} p={4}>
-                        <Controller
-                            control={control}
-                            name="name"
-                            rules={{ required: 'Tên là bắt buộc' }}
-                            render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                                <FormControl isInvalid={!!error}>
-                                    <Input
-                                        placeholder="Tên"
-                                        onBlur={onBlur}
-                                        onChangeText={(text) => {
-                                            const sanitizedValue = DOMPurify.sanitize(text);
-                                            onChange(sanitizedValue);
-                                        }}
-                                        value={value}
-                                        variant="underlined"
-                                    />
-                                    <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
-                                </FormControl>
-                            )}
+                       <Controller
+                         control={control}
+                         name="name"
+                         rules={{ required: 'Tên là bắt buộc' }}
+                           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+                               <FormControl isInvalid={!!error}>
+                                   <Input
+                                       placeholder="Tên"
+                                       onBlur={onBlur}
+                                       onChangeText={(text) => {
+                                           onChange(basicXSSSanitizer(text));
+                                       }}
+                                       value={value}
+                                       variant="underlined"
+                                   />
+                                   {error &&  <FormControl.ErrorMessage>{error.message}</FormControl.ErrorMessage>}
+                               </FormControl>
+                           )}
                         />
+
                         <Controller
                             control={control}
                             name="phone"
-                            rules={{ required: 'Số điện thoại là bắt buộc' }}
+                            rules={{validate: validatePhone }}
                             render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                                 <FormControl isInvalid={!!error}>
                                     <Input
                                         placeholder="Số điện thoại"
                                         onBlur={onBlur}
                                         onChangeText={(text) => {
-                                            const sanitizedValue = DOMPurify.sanitize(text);
-                                            onChange(sanitizedValue);
+                                            onChange(basicXSSSanitizer(text));
                                         }}
                                         value={value}
                                         variant="underlined"
                                     />
-                                    <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
+                                     {error && <FormControl.ErrorMessage>{error.message}</FormControl.ErrorMessage>}
                                 </FormControl>
                             )}
                         />
@@ -288,8 +326,7 @@ export const Payment = () => {
                                     <Select
                                         selectedValue={value}
                                         onValueChange={(itemValue) => {
-                                            const sanitizedValue = DOMPurify.sanitize(itemValue);
-                                            onChange(sanitizedValue);
+                                            onChange(basicXSSSanitizer(itemValue));
                                             handleCityChange(itemValue);
                                         }}
                                         placeholder="Thành phố"
@@ -297,12 +334,12 @@ export const Payment = () => {
                                         {loadingCities ? (
                                             <Select.Item label="Loading..." value="" />
                                         ) : (
-                                            cities.map((city: AnyElement) => (
+                                            cities?.map((city: AnyElement) => (
                                                 <Select.Item key={city.id} label={city.name_en} value={city.name} />
                                             ))
                                         )}
                                     </Select>
-                                    <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
+                                    {error && <FormControl.ErrorMessage>{error.message}</FormControl.ErrorMessage>}
                                 </FormControl>
                             )}
                         />
@@ -318,14 +355,14 @@ export const Payment = () => {
                                         placeholder="Quận/Huyện"
                                     >
                                         {districtData ? (
-                                            districtData.map((district: District) => (
+                                            districtData?.map((district: District) => (
                                                 <Select.Item key={district.code} label={district.name} value={district.name} />
                                             ))
                                         ) : (
                                             <Select.Item label="Loading..." value="" />
                                         )}
                                     </Select>
-                                    <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
+                                  {error && <FormControl.ErrorMessage>{error.message}</FormControl.ErrorMessage>}
                                 </FormControl>
                             )}
                         />
@@ -333,19 +370,18 @@ export const Payment = () => {
                             control={control}
                             name="address"
                             rules={{ required: 'Địa chỉ là bắt buộc' }}
-                            render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+                             render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                                 <FormControl isInvalid={!!error}>
                                     <Input
                                         placeholder="Tên đường, Tòa nhà, Số nhà"
                                         onBlur={onBlur}
                                         onChangeText={(text) => {
-                                            const sanitizedValue = DOMPurify.sanitize(text);
-                                            onChange(sanitizedValue);
+                                          onChange(basicXSSSanitizer(text));
                                         }}
                                         value={value}
                                         variant="underlined"
                                     />
-                                    <FormControl.ErrorMessage>{error?.message}</FormControl.ErrorMessage>
+                                     {error &&  <FormControl.ErrorMessage>{error.message}</FormControl.ErrorMessage>}
                                 </FormControl>
                             )}
                         />
@@ -358,8 +394,9 @@ export const Payment = () => {
                 </Box>
             </ScrollView >
         </Box >
-    )
-}
+    );
+};
+
 const styles = StyleSheet.create({
     container: {
         padding: 10,
@@ -370,6 +407,4 @@ const styles = StyleSheet.create({
         height: 90,
         width: "100%"
     }
-})
-
-
+});

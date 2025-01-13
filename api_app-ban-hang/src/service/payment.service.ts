@@ -6,6 +6,7 @@ import Order, { IOrder } from '../model/order.model';
 import cartService from './cart.service';
 import Product from '../model/product.model';
 import basicXSSSanitizer from '../utils/basicXSSSanitizer';
+import { Decrypt } from '../utils/aesencryption ';
 const routerPayment = express.Router();
 const config = {
     app_id: '2553',
@@ -17,7 +18,6 @@ const getCoordinatesFromAddress = async (address: string) => {
     try {
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
         const response = await axios.get(url);
-        console.log(response.data, "response data");
         if (response.data && response.data.length > 0) {
             const { lat, lon } = response.data[0];
             return { latitude: parseFloat(lat), longitude: parseFloat(lon) };
@@ -36,12 +36,13 @@ const getCoordinatesFromAddress = async (address: string) => {
     }
 };
 routerPayment.post('/payment', async (req: Request, res: Response) => {
+    console.log(2312)
     try {
         const { user_id, amount, phone, address, items } = req.body;
         const embed_data = {
             redirecturl: 'myapp://payment-success',
-            phone: phone,
-            address: address,
+            phone: Decrypt(phone),
+            address: Decrypt(address),
         };
         const transID = Math.floor(Math.random() * 1000000);
         const order: any = {
@@ -51,8 +52,8 @@ routerPayment.post('/payment', async (req: Request, res: Response) => {
             app_time: Date.now(),
             item: JSON.stringify(items),
             embed_data: JSON.stringify(embed_data),
-            amount: amount,
-            callback_url: 'https://0b6f-58-186-92-203.ngrok-free.app/api/callback',
+            amount: Number(Decrypt(amount)),
+            callback_url: 'https://1cf0-1-52-196-160.ngrok-free.app/api/callback',
             description: `Thanh toán đơn hàng`,
             bank_code: '',
         };

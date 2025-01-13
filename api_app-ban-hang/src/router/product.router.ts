@@ -1,11 +1,12 @@
 import express from "express"
 import productController from "../controller/product.controller"
+import verifyToken from "../middleware/verify"
 const routerProduct = express.Router()
 
 routerProduct.get("/", productController.getAllProduct)
-routerProduct.get("/new", productController.getProductNew)
-routerProduct.get("/sale", productController.getProductSale)
-routerProduct.get("/discount", productController.getProductDiscount)
+routerProduct.get("/new",verifyToken, productController.getProductNew)
+routerProduct.get("/sale", verifyToken, productController.getProductSale)
+routerProduct.get("/discount", verifyToken, productController.getProductDiscount)
 routerProduct.get("/search", productController.getFilterProduct)
 routerProduct.get("/category", productController.getProductByCategory)
 routerProduct.get("/:id", productController.getProductById)

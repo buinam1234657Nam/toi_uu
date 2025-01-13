@@ -6,6 +6,10 @@ export const useCreateUser = (onSuccess: () => void) => {
     return useMutation({
         mutationFn: SingUpService.singUp,
         onSuccess: () => {
+            Notification({
+                description:"Đăng ký thành công",
+                alertType: AlertTypes.SUCCESS
+            })
             onSuccess && onSuccess()
         },
         onError(error: AnyElement) {

@@ -1,9 +1,8 @@
-import { error } from "console";
-import User, { IUser } from "../model/user.model";
-import cartService from "./cart.service";
 import bcrypt from "bcrypt";
 import { saltLength } from "../constants";
+import User, { IUser } from "../model/user.model";
 import basicXSSSanitizer from "../utils/basicXSSSanitizer";
+import cartService from "./cart.service";
 
 export interface IUpdateAccount {
     _id: string;
@@ -39,8 +38,12 @@ const createUser = async (data: IUser) => {
         const errors: string[] = [];
 
         const existingEmail = await User.findOne({ email: data.email });
+        const existingInfoDevice = await User.findOne({ infoDevice: data.infoDevice });
         if (existingEmail) {
             errors.push("Email already exists");
+        }
+        if (existingInfoDevice) {
+            errors.push("Mỗi thiết bị chỉ đươc đăng ký 1 tài khoản");
         }
         if (errors.length > 0) {
             const error = new Error(errors.join(", "));
@@ -50,7 +53,8 @@ const createUser = async (data: IUser) => {
         const result = await User.create({ 
             ...data,
             password:basicXSSSanitizer(passwordBcrypt),
-            confirmPassword:basicXSSSanitizer(passwordBcrypt)
+            confirmPassword:basicXSSSanitizer(passwordBcrypt),
+            infoDevice: data.infoDevice
          });
         cartService.createCart(result._id as string)
         return result;

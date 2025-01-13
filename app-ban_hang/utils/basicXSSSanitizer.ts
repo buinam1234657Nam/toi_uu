@@ -2,9 +2,7 @@ export default function basicXSSSanitizer(input: string): string {
   if (typeof input !== 'string') {
     return '';  // Trả về chuỗi rỗng cho đầu vào không phải là chuỗi
   }
-
   let sanitized = input;
-
   // 1. Thoát các ký tự HTML
   sanitized = sanitized.replace(/</g, '&lt;');
   sanitized = sanitized.replace(/>/g, '&gt;');

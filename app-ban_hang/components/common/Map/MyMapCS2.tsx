@@ -2,8 +2,6 @@ import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 
-
-
 const MyMapCS2 = () => {
     const specificLocation = {
         latitude: 20.44931750742698,

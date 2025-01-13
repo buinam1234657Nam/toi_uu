@@ -12,10 +12,6 @@ import { useGetProductSale } from '@/hooks/useGetProductSale';
 import { useGetProductDiscount } from '@/hooks/useGetProductDiscount';
 import { appStore } from '@/store';
 import { useGetCartByUserId } from '@/modules/cart/hook/getCartByUserId';
-// import MyMapCS1 from '@/components/common/Map/MyMapCS1';
-// import MyMapCS2 from '@/components/common/Map/MyMapCS2';
-// import MyMapCS3 from '@/components/common/Map/MyMapCS3';
-
 export default function Home() {
     const { data: listProductNew, isFetching: loadingProductNew } = useGetProductNew({ page: 0, limit: 4 }, true)
     const { data: listProductSale, isFetching: loadingProductSale } = useGetProductSale({ page: 0, limit: 4 }, true)
